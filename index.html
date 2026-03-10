@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DENSO Japanese Workplace Communication</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;font-family:'Inter',sans-serif;background:#F4F6F8;color:#1A1D23;}
+body{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;min-height:100vh;}
+
+.card{background:#fff;border:1px solid #DDE1E8;border-radius:12px;padding:40px 44px;max-width:640px;width:100%;box-shadow:0 2px 12px rgba(0,0,0,0.06);}
+
+.header{display:flex;align-items:center;gap:16px;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid #DDE1E8;}
+.logo{width:48px;height:48px;border-radius:8px;background:#C8102E;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.header-text{}
+.org{font-size:10px;font-weight:700;letter-spacing:3px;color:#6B7585;text-transform:uppercase;margin-bottom:3px;}
+.course-title{font-size:17px;font-weight:700;color:#1A1D23;}
+
+h1{font-size:28px;font-weight:800;color:#1A1D23;letter-spacing:-0.5px;margin-bottom:6px;}
+.subtitle{font-size:14px;color:#4A5260;line-height:1.65;margin-bottom:32px;}
+
+.section-label{font-size:10px;font-weight:700;letter-spacing:3px;color:#6B7585;text-transform:uppercase;margin-bottom:12px;}
+
+.phase-links{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.phase-link{display:flex;align-items:center;gap:14px;padding:14px 18px;border:1.5px solid #DDE1E8;border-radius:8px;text-decoration:none;color:#1A1D23;transition:all 0.15s;background:#fff;}
+.phase-link:hover{border-color:#C8102E;background:#FFF5F6;}
+.phase-link:hover .pl-arrow{color:#C8102E;}
+.pl-num{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;flex-shrink:0;}
+.pl-num.p1{background:#FFF8E6;color:#8A6A00;border:1px solid #E8C96A;}
+.pl-num.p2{background:#F3EFFE;color:#5B3E9E;border:1px solid #B9A3E8;}
+.pl-num.p2f{background:#13151C;color:#9B7FD4;border:1px solid #7B5FD0;}
+.pl-num.p3{background:#EDF7F1;color:#1A6E3A;border:1px solid #7DC4A0;}
+.pl-body{flex:1;}
+.pl-title{font-size:14px;font-weight:600;margin-bottom:2px;}
+.pl-desc{font-size:12px;color:#6B7585;}
+.pl-arrow{font-size:16px;color:#BCC3CE;transition:color 0.15s;}
+
+.divider{height:1px;background:#DDE1E8;margin:24px 0;}
+
+.fac-note{background:#F3EFFE;border:1px solid #B9A3E8;border-left:3px solid #5B3E9E;border-radius:6px;padding:13px 16px;font-size:13px;color:#4A5260;line-height:1.65;}
+.fac-note strong{color:#5B3E9E;font-weight:600;}
+
+.footer{margin-top:28px;font-size:11px;color:#6B7585;text-align:center;font-family:'IBM Plex Mono',monospace;}
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="header">
+    <div class="logo">⛩</div>
+    <div class="header-text">
+      <div class="org">DENSO Manufacturing · Statesville, NC</div>
+      <div class="course-title">Japanese Workplace Communication</div>
+    </div>
+  </div>
+
+  <h1>Session 5</h1>
+  <p class="subtitle">Acknowledgment rituals, X は Y です, register &amp; hierarchy — 90 minutes across three phases.</p>
+
+  <div class="section-label">Learner Links</div>
+  <div class="phase-links">
+    <a href="denso-s5-phase1.html" class="phase-link">
+      <span class="pl-num p1">Phase 1</span>
+      <div class="pl-body">
+        <div class="pl-title">Recon Blitz</div>
+        <div class="pl-desc">Vocab review · 20 min · Start here</div>
+      </div>
+      <span class="pl-arrow">→</span>
+    </a>
+    <a href="denso-s5-phase2-learner.html" class="phase-link">
+      <span class="pl-num p2">Phase 2</span>
+      <div class="pl-body">
+        <div class="pl-title">Field Briefing</div>
+        <div class="pl-desc">Phrases, grammar, sentence builder · 30 min</div>
+      </div>
+      <span class="pl-arrow">→</span>
+    </a>
+    <a href="denso-s5-phase3.html" class="phase-link">
+      <span class="pl-num p3">Phase 3</span>
+      <div class="pl-body">
+        <div class="pl-title">Floor Sim</div>
+        <div class="pl-desc">16 real DENSO scenarios · 40 min</div>
+      </div>
+      <span class="pl-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">Facilitator</div>
+  <div class="phase-links" style="margin-bottom:20px;">
+    <a href="denso-s5-phase2-facilitator.html" class="phase-link">
+      <span class="pl-num p2f">Guide</span>
+      <div class="pl-body">
+        <div class="pl-title">Phase 2 Facilitator Control Panel</div>
+        <div class="pl-desc">Unlock blocks live · talking points · watch-fors</div>
+      </div>
+      <span class="pl-arrow">→</span>
+    </a>
+  </div>
+
+  <div class="fac-note">
+    <strong>How to run a session:</strong> Share this page URL with learners — they start at Phase 1 and each phase links to the next. Open the Facilitator panel on your own screen before Phase 2 begins.
+  </div>
+</div>
+
+<div class="footer">Session 05 · DENSO Japanese Workplace Communication</div>
+
+</body>
+</html>
