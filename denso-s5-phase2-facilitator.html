@@ -677,6 +677,7 @@ function updateDots(){
 function checkPin(){
   if(pinEntry === CORRECT_PIN){
     document.getElementById('pin-gate').style.display='none';
+    if(!facTimerInterval){ facTimerInterval=setInterval(facTimerTick,1000); }
     document.getElementById('fac-shell').style.display='flex';
   } else {
     for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
@@ -716,33 +717,6 @@ function facToggleTimer() {
   const btn = document.getElementById('fac-timer-btn');
   if (btn) btn.textContent = facTimerPaused ? '▶ Resume' : '⏸ Pause';
 }
-
-// Start timer after PIN is entered
-const _origShowFac = window.onload;
-document.addEventListener('facUnlocked', () => {
-  facTimerInterval = setInterval(facTimerTick, 1000);
-});
-
-// Patch checkPin to fire facUnlocked
-const _origCheckPin = window.checkPin;
-function checkPin() {
-  if (typeof _origCheckPin === 'function') _origCheckPin();
-  // inline logic since checkPin is defined in same scope
-}
-// Hook directly: override after PIN success
-const _pinCheckOrig = checkPin;
-// Instead, patch the PIN gate hide directly
-const _facPinObserver = new MutationObserver(() => {
-  const gate = document.getElementById('pin-gate');
-  if (gate && gate.style.display === 'none' && !facTimerInterval) {
-    facTimerInterval = setInterval(facTimerTick, 1000);
-    _facPinObserver.disconnect();
-  }
-});
-document.addEventListener('DOMContentLoaded', () => {
-  const gate = document.getElementById('pin-gate');
-  if (gate) _facPinObserver.observe(gate, { attributes: true, attributeFilter: ['style'] });
-});
 </script>
 </body>
 </html>
