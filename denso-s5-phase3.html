@@ -632,7 +632,6 @@ function speak(text) {
     '...この手順でお願いします。いいですか？':          'kono-tejun-de-onegaishimasu-ii-desu-ka',
     '〜です':                                             'desu',
     'です':                                               'desu',
-    '[名前]です。[役職]です。':                             'namae-yakushoku',
   };
 
   // last-played tracker per phrase for no-repeat shuffle
@@ -913,9 +912,9 @@ function loadScenario(){
     <div class="sc-setup">${sc.setup}</div>
     ${bubbleHtml}
     <div class="sc-prompt">${sc.prompt}</div>
-    <div class="sim-choices">${choicesHtml}</div>
-    <div class="sim-feedback" id="sim-fb"></div>
-    <div style="text-align:center;margin-top:12px;"><button class="btn btn-primary" id="sim-next" style="display:none" onclick="nextScenario()">Next Scenario →</button></div>`;
+    <div class="sim-choices">${choicesHtml}</div>`;
+  document.getElementById('sim-fb').className='sim-feedback';
+  document.getElementById('sim-next').style.display='none';
 }
 
 function answerScenario(idx){
@@ -932,7 +931,7 @@ function answerScenario(idx){
   const fb=document.getElementById('sim-fb');
   fb.innerHTML=correct?sc.fb_correct:sc.fb_wrong;
   fb.className='sim-feedback show '+(correct?'ok':'bad');
-  document.getElementById('sim-next').style.display='inline-flex';
+  document.getElementById('sim-next').style.display='block';
   const correctChoice=sc.choices.find(ch=>ch.correct);
   const audioText=correctChoice&&correctChoice.jp?correctChoice.jp:(sc.jp||null);
   if(audioText)setTimeout(()=>speak(audioText),400);

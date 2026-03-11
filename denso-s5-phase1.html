@@ -402,7 +402,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
       <button class="btn btn-secondary" id="p1-skip" onclick="clearTimeout(autoAdvance);loadBlitz()" style="width:100%;display:none;margin-top:6px;justify-content:center;">Next →</button>
     </div>
     <div style="text-align:center;margin-top:24px;">
-      <button class="btn btn-secondary" onclick="finishPhase1()">Finish Phase 1 &amp; Move On →</button>
+      <button class="btn btn-secondary" onclick="if(confirm('End Phase 1 now?'))finishPhase1()" style="opacity:0.5;font-size:11px;padding:8px 16px;margin-top:24px;">Finish Phase 1 &amp; Move On →</button>
     </div>
   </div>
 </div>
