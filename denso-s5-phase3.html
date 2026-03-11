@@ -542,7 +542,7 @@ function revealCue(){
   document.getElementById('cue-romaji').textContent=c.romaji;
   document.getElementById('cue-phonetic').textContent=c.phonetic;
   document.getElementById('cue-jp').textContent=c.jp;
-  document.getElementById('cue-en').textContent=c.en;
+  document.getElementById('cue-en').innerHTML=c.en;
   document.getElementById('cue-answer').style.display='block';
   document.getElementById('cue-reveal-btn').style.display='none';
   document.getElementById('cue-next-btn').style.display='inline-block';
