@@ -630,6 +630,7 @@ function speak(text) {
   // last-played tracker per phrase for no-repeat shuffle
   if (!window._speakLast) window._speakLast = {};
 
+  console.log('speak() called with:', JSON.stringify(text), '→ slug:', AUDIO_MAP[text]);
   const slug = AUDIO_MAP[text];
   if (slug) {
     // single file per phrase for now (3-voice shuffle ready when v2/v3 added)
