@@ -332,6 +332,8 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 }
 
 
+
+/* facilitator timer overlay */
 </style>
 </head>
 <body>
@@ -374,7 +376,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
     </div>
     <div class="tb-right">
       <div class="phase-pill p1">⚡ Recon</div>
-      <div class="timer-box" id="p1-timer" aria-label="Time remaining">--:--</div>
+      <div class="timer-box" id="p1-timer" style="display:none" aria-label="Time remaining">--:--</div>
     </div>
   </div>
   <div class="course-progress" role="progressbar" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
@@ -422,11 +424,103 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 
 <script>
 
-function speak(text){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ja-JP';u.rate=0.82;
+function speak(text) {
+  const AUDIO_MAP = {
+    '止まれ':                                           'tomare',
+    'どけ':                                             'doke',
+    '危ない':                                           'abunai',
+    'だめ':                                             'dame',
+    '火事':                                             'kaji',
+    '助けて':                                           'tasukete',
+    'おはようございます':                               'ohayou-gozaimasu',
+    'おはようございます。':                             'ohayou-gozaimasu',
+    'おはようございます！':                             'ohayou-gozaimasu-exclaim',
+    'おはよう':                                         'ohayou',
+    'こんにちは':                                       'konnichiwa',
+    'こんばんは':                                       'konbanwa',
+    'さようなら':                                       'sayounara',
+    'さようなら。':                                     'sayounara',
+    'さようなら！':                                     'sayounara',
+    'じゃまた':                                         'ja-mata',
+    'じゃまた。':                                       'ja-mata',
+    'じゃまた！':                                       'ja-mata',
+    'お疲れ様です':                                     'otsukaresama-desu',
+    'お疲れ様です。':                                   'otsukaresama-desu',
+    'お疲れ様でした':                                   'otsukaresama-deshita',
+    'お疲れ様でした。':                                 'otsukaresama-deshita',
+    'お疲れ様でした！':                                 'otsukaresama-deshita',
+    'お疲れ':                                           'otsukare',
+    'お疲れ！':                                         'otsukare-exclaim',
+    '(nod) お疲れ様です。':                             'otsukaresama-desu',
+    'お疲れ様でした。よろしくお願いします。':           'otsukaresama-deshita-yoroshiku-onegaishimasu',
+    'お先に失礼します':                                 'osaki-ni-shitsurei-shimasu',
+    'お先に失礼します。':                               'osaki-ni-shitsurei-shimasu',
+    '失礼します':                                       'shitsurei-shimasu',
+    'します':                                           'shimasu',
+    'ご苦労様です':                                     'gokurousama-desu',
+    'ご苦労様です。':                                   'gokurousama-desu',
+    'ご苦労様でした。':                                 'gokurousama-deshita',
+    'お世話になりました':                               'osewa-ni-narimashita',
+    'お世話になりました。':                             'osewa-ni-narimashita',
+    'はじめまして':                                     'hajimemashite',
+    'はじめまして。':                                   'hajimemashite',
+    'はじめまして。山田です。よろしくお願いします。':   'hajimemashite-yamada-desu-yoroshiku-onegaishimasu',
+    'よろしくお願いします':                             'yoroshiku-onegaishimasu',
+    'よろしくお願いします。':                           'yoroshiku-onegaishimasu',
+    'よろしくお願いいたします':                         'yoroshiku-onegaiitashimasu',
+    'よろしく':                                         'yoroshiku',
+    'よろしく！':                                       'yoroshiku',
+    'こちらこそよろしくお願いします':                   'kochira-koso-yoroshiku-onegaishimasu',
+    'こちらこそ、またよろしくお願いします。':           'kochira-koso-mata-yoroshiku-onegaishimasu',
+    'すみません':                                       'sumimasen',
+    'すみません、もう一度言ってもらえますか？':         'sumimasen-mou-ichido-itte-moraemasu-ka',
+    'すみません、お名前をもう一度言ってもらえますか？': 'sumimasen-onamae-wo-mou-ichido-itte-moraemasu-ka',
+    'もう一度言ってもらえますか？':                     'mou-ichido-itte-moraemasu-ka',
+    'もう一度言ってもらえますか？。':                   'mou-ichido-itte-moraemasu-ka',
+    'ゆっくり言ってもらえますか？':                     'yukkuri-itte-moraemasu-ka',
+    'もらえますか？':                                   'moraemasu-ka',
+    'か？':                                             'ka',
+    '言ってもらえますか？':                             'itte-moraemasu-ka',
+    'ありがとうございます。':                           'arigatou-gozaimasu',
+    'はい、わかりました。':                             'hai-wakarimashita',
+    'はい、いいです。':                                 'hai-ii-desu',
+    'いえ、いえ。':                                     'ie-ie',
+    'わかりました。':                                   'wakarimashita',
+    'わかりません。':                                   'wakarimasen',
+    'こんにちは。お疲れ様です。':                       'konnichiwa-otsukaresama-desu',
+    '...この手順でお願いします。いいですか？':          'kono-tejun-de-onegaishimasu-ii-desu-ka',
+  };
+
+  // last-played tracker per phrase for no-repeat shuffle
+  if (!window._speakLast) window._speakLast = {};
+
+  const slug = AUDIO_MAP[text];
+  if (slug) {
+    // single file per phrase for now (3-voice shuffle ready when v2/v3 added)
+    const variants = [slug + '.wav'];
+    // when v2/v3 exist, swap to: [slug+'-v1.wav', slug+'-v2.wav', slug+'-v3.wav']
+    let pick;
+    if (variants.length === 1) {
+      pick = variants[0];
+    } else {
+      const last = window._speakLast[slug];
+      const pool = variants.filter(v => v !== last);
+      pick = pool[Math.floor(Math.random() * pool.length)];
+    }
+    window._speakLast[slug] = pick;
+    const audio = new Audio('./media/' + pick);
+    audio.play().catch(() => {
+      // fallback to Web Speech API if file fails
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'ja-JP'; u.rate = 0.82;
+      window.speechSynthesis.speak(u);
+    });
+    return;
+  }
+
+  // fallback: no mapping found
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = 'ja-JP'; u.rate = 0.82;
   window.speechSynthesis.speak(u);
 }
 function showScreen(id){
@@ -449,24 +543,26 @@ function startTimer(phase,secs,elId){
 function stopTimer(p){if(window._timers)clearInterval(window._timers[p]);}
 
 const reviewVocab = [
-  {jp:"止まれ",romaji:"Tomare",phonetic:"to-MA-reh",en:"Stop!",cat:"Safety"},
-  {jp:"危ない",romaji:"Abunai",phonetic:"ah-boo-NAI",en:"Danger! Watch out!",cat:"Safety"},
-  {jp:"だめ",romaji:"Dame",phonetic:"DAH-meh",en:"No! Don't do that!",cat:"Safety"},
-  {jp:"火事",romaji:"Kaji",phonetic:"KAH-ji",en:"Fire!",cat:"Safety"},
-  {jp:"助けて",romaji:"Tasukete",phonetic:"ta-su-KEH-teh",en:"Help me!",cat:"Safety"},
-  {jp:"どけ",romaji:"Doke",phonetic:"DOH-keh",en:"Move out of the way!",cat:"Safety"},
-  {jp:"おはようございます",romaji:"Ohayou gozaimasu",phonetic:"oh-HA-yoh go-ZAI-mas",en:"Good morning (formal)",cat:"Greeting"},
-  {jp:"こんにちは",romaji:"Konnichiwa",phonetic:"kon-NEE-chee-wa",en:"Good afternoon / Hello",cat:"Greeting"},
-  {jp:"こんばんは",romaji:"Konbanwa",phonetic:"kon-BAN-wa",en:"Good evening",cat:"Greeting"},
-  {jp:"お疲れ様でした",romaji:"Otsukaresama deshita",phonetic:"oh-tsu-KAH-reh-sa-ma desh-ta",en:"Good work today (end of shift)",cat:"Greeting"},
-  {jp:"失礼します",romaji:"Shitsurei shimasu",phonetic:"shit-su-REH shee-mas",en:"Excuse me / I'm leaving",cat:"Greeting"},
-  {jp:"じゃまた",romaji:"Ja mata",phonetic:"JA ma-ta",en:"See you later",cat:"Greeting"},
-  {jp:"さようなら",romaji:"Sayounara",phonetic:"sa-YOH-na-ra",en:"Goodbye (formal)",cat:"Greeting"},
-  {jp:"はじめまして",romaji:"Hajimemashite",phonetic:"ha-ji-meh-MASH-teh",en:"Nice to meet you (first time)",cat:"Self-Intro"},
-  {jp:"〜です",romaji:"~ desu",phonetic:"~ DES",en:"I am ~ / It is ~ (polite period)",cat:"Self-Intro"},
-  {jp:"よろしくお願いします",romaji:"Yoroshiku onegaishimasu",phonetic:"yo-ROSH-ku o-neh-GAI-shee-mas",en:"Please treat me well / Counting on you",cat:"Self-Intro"},
-  {jp:"おはよう",romaji:"Ohayou",phonetic:"oh-HA-yoh",en:"Good morning (casual)",cat:"Greeting"},
-  {jp:"お疲れ様です",romaji:"Otsukaresama desu",phonetic:"oh-tsu-KAH-reh-sa-ma DES",en:"Good work (mid-shift, present)",cat:"Greeting"},
+  {jp:"止まれ",romaji:"Tomare",phonetic:"toh-mah-reh",en:"Stop!",cat:"Safety"},
+  {jp:"危ない",romaji:"Abunai",phonetic:"ah-boo-nigh",en:"Danger! Watch out!",cat:"Safety"},
+  {jp:"だめ",romaji:"Dame",phonetic:"dah-meh",en:"No! Don't do that!",cat:"Safety"},
+  {jp:"火事",romaji:"Kaji",phonetic:"kah-jee",en:"Fire!",cat:"Safety"},
+  {jp:"助けて",romaji:"Tasukete",phonetic:"tah-soo-keh-teh",en:"Help me!",cat:"Safety"},
+  {jp:"どけ",romaji:"Doke",phonetic:"doh-keh",en:"Move out of the way!",cat:"Safety"},
+  {jp:"おはようございます",romaji:"Ohayou gozaimasu",phonetic:"oh-ha-yoh go-zigh-mas",en:"Good morning (formal)",cat:"Greeting"},
+  {jp:"こんにちは",romaji:"Konnichiwa",phonetic:"kon-nee-chee-wah",en:"Good afternoon / Hello",cat:"Greeting"},
+  {jp:"こんばんは",romaji:"Konbanwa",phonetic:"kon-bahn-wah",en:"Good evening",cat:"Greeting"},
+  {jp:"お疲れ様でした",romaji:"Otsukaresama deshita",phonetic:"oht-tsoo-kah-reh-sah-mah desh-tah",en:"Good work today (end of shift)",cat:"Greeting"},
+  {jp:"失礼します",romaji:"Shitsurei shimasu",phonetic:"shee-tsoo-reh shee-mas",en:"Excuse me / I'm leaving",cat:"Greeting"},
+  {jp:"じゃ、また",romaji:"Ja, mata",phonetic:"jah, mah-tah",en:"See you later",cat:"Greeting"},
+  {jp:"さようなら",romaji:"Sayounara",phonetic:"sah-yoh-nah-rah",en:"Goodbye (formal)",cat:"Greeting"},
+  {jp:"はじめまして",romaji:"Hajimemashite",phonetic:"hah-jee-meh-mash-teh",en:"Nice to meet you (first time)",cat:"Self-Intro"},
+  {jp:"〜です",romaji:"~ desu",phonetic:"~ des",en:"I am ~ / It is ~ (polite period)",cat:"Self-Intro"},
+  {jp:"よろしくお願いします",romaji:"Yoroshiku onegaishimasu",phonetic:"yoh-roh-shee-koo oh-neh-guy-mas",en:"Please treat me well / Counting on you",cat:"Self-Intro"},
+  {jp:"おはよう",romaji:"Ohayou",phonetic:"oh-ha-yoh",en:"Good morning (casual)",cat:"Greeting"},
+  {jp:"お疲れ様です",romaji:"Otsukaresama desu",phonetic:"oht-tsoo-kah-reh-sah-mah des",en:"Good work (mid-shift, present)",cat:"Greeting"},
+  {jp:"もう一度言ってもらえますか？",romaji:"Mou ichido itte moraemasu ka?",phonetic:"moh ee-chee-doh it-teh moh-reh-mas kah",en:"Could you say that one more time?",cat:"Recovery"},
+  {jp:"ゆっくり言ってもらえますか？",romaji:"Yukkuri itte moraemasu ka?",phonetic:"yook-koo-ree it-teh moh-reh-mas kah",en:"Could you say that more slowly?",cat:"Recovery"},
 ];
 
 
@@ -620,6 +716,8 @@ function finishPhase1(perfect=false){
 
   showScreen('screen-done');
 }
+
+
 </script>
 </body>
 </html>

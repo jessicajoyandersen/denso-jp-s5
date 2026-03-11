@@ -10,6 +10,22 @@
 html,body{height:100%;overflow:hidden;font-family:"Inter",sans-serif;}
 body{background:#0F1117;color:#C8D0E0;font-size:14px;}
 a{color:#5E9BDC;}
+#pin-gate{position:fixed;inset:0;background:#0F1117;z-index:9999;display:flex;align-items:center;justify-content:center;}
+.pin-card{background:#1A1D25;border:1px solid #2A2D38;border-radius:12px;padding:40px 44px;text-align:center;max-width:360px;width:100%;}
+.pin-logo{width:48px;height:48px;border-radius:8px;background:#C8102E;display:flex;align-items:center;justify-content:center;font-size:22px;margin:0 auto 20px;}
+.pin-title{font-size:18px;font-weight:700;color:#fff;margin-bottom:6px;}
+.pin-sub{font-size:13px;color:#6B7585;margin-bottom:28px;line-height:1.6;}
+.pin-dots{display:flex;gap:12px;justify-content:center;margin-bottom:24px;}
+.pin-dot{width:14px;height:14px;border-radius:50%;border:2px solid #3A4050;background:transparent;transition:all 0.15s;}
+.pin-dot.filled{background:#C8102E;border-color:#C8102E;}
+.pin-dot.error{background:#E87070;border-color:#E87070;animation:shake 0.35s ease;}
+.pin-pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:240px;margin:0 auto;}
+.pin-btn{background:#13151C;border:1px solid #2A2D38;border-radius:8px;color:#C8D0E0;font-size:20px;font-weight:600;padding:16px;cursor:pointer;transition:all 0.12s;font-family:"Inter",sans-serif;}
+.pin-btn:hover{background:#2A2D38;border-color:#3A4050;color:#fff;}
+.pin-btn:active{transform:scale(0.95);}
+.pin-btn.clear{font-size:13px;font-weight:600;letter-spacing:1px;color:#6B7585;}
+.pin-error{font-size:12px;color:#E87070;margin-top:14px;height:16px;font-family:"IBM Plex Mono",monospace;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
 
 .fac-shell{display:flex;flex-direction:column;height:100%;overflow:hidden;}
 
@@ -19,6 +35,11 @@ a{color:#5E9BDC;}
 .fac-tb-org{font-size:9px;font-weight:700;letter-spacing:3px;color:#6B7585;text-transform:uppercase;}
 .fac-tb-title{font-size:15px;font-weight:700;color:#fff;}
 .fac-tb-right{display:flex;align-items:center;gap:10px;}
+.fac-timer-wrap{display:flex;align-items:center;gap:8px;background:#13151C;border:1px solid #2A2D38;border-radius:6px;padding:5px 12px;}
+.fac-timer-display{font-family:'IBM Plex Mono',monospace;font-size:16px;font-weight:600;color:#C8D0E0;min-width:52px;text-align:center;}
+.fac-timer-display.urgent{color:#E87070;}
+.fac-timer-btn{font-size:11px;font-weight:700;letter-spacing:1px;padding:4px 10px;border-radius:4px;border:1px solid #3A4050;background:#1A1D25;color:#9B7FD4;cursor:pointer;font-family:'Inter',sans-serif;}
+.fac-timer-btn:hover{background:#2A2D38;}
 .fac-badge{font-family:"IBM Plex Mono",monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:4px 12px;border-radius:20px;border:1.5px solid #7B5FD0;color:#9B7FD4;background:rgba(142,68,173,0.12);}
 .conn-pill{font-family:"IBM Plex Mono",monospace;font-size:10px;padding:4px 10px;border-radius:10px;border:1px solid;display:flex;align-items:center;gap:6px;}
 .conn-pill.offline{border-color:#3A2D38;color:#6B5060;background:rgba(200,16,46,0.07);}
@@ -99,7 +120,37 @@ a{color:#5E9BDC;}
 </style>
 </head>
 <body>
-<div class="fac-shell">
+<!-- PIN gate -->
+<div id="pin-gate">
+  <div class="pin-card">
+    <div class="pin-logo">🎓</div>
+    <div class="pin-title">Facilitator Access</div>
+    <div class="pin-sub">Enter your 4-digit PIN to open the control panel.</div>
+    <div class="pin-dots">
+      <div class="pin-dot" id="pd0"></div>
+      <div class="pin-dot" id="pd1"></div>
+      <div class="pin-dot" id="pd2"></div>
+      <div class="pin-dot" id="pd3"></div>
+    </div>
+    <div class="pin-pad">
+      <button class="pin-btn" onclick="pinPress('1')">1</button>
+      <button class="pin-btn" onclick="pinPress('2')">2</button>
+      <button class="pin-btn" onclick="pinPress('3')">3</button>
+      <button class="pin-btn" onclick="pinPress('4')">4</button>
+      <button class="pin-btn" onclick="pinPress('5')">5</button>
+      <button class="pin-btn" onclick="pinPress('6')">6</button>
+      <button class="pin-btn" onclick="pinPress('7')">7</button>
+      <button class="pin-btn" onclick="pinPress('8')">8</button>
+      <button class="pin-btn" onclick="pinPress('9')">9</button>
+      <button class="pin-btn clear" onclick="pinClear()">CLR</button>
+      <button class="pin-btn" onclick="pinPress('0')">0</button>
+      <button class="pin-btn clear" onclick="pinBack()">⌫</button>
+    </div>
+    <div class="pin-error" id="pin-error"></div>
+  </div>
+</div>
+
+<div class="fac-shell" id="fac-shell" style="display:none;">
 
   <div class="fac-topbar">
     <div class="fac-tb-left">
@@ -107,6 +158,10 @@ a{color:#5E9BDC;}
       <div class="fac-tb-title">Facilitator Control Panel</div>
     </div>
     <div class="fac-tb-right">
+      <div class="fac-timer-wrap">
+        <div class="fac-timer-display" id="fac-timer">30:00</div>
+        <button class="fac-timer-btn" id="fac-timer-btn" onclick="facToggleTimer()">⏸ Pause</button>
+      </div>
       <div class="fac-badge">🎓 Facilitator</div>
       <div class="conn-pill offline" id="conn-pill">
         <div class="conn-dot"></div>
@@ -316,7 +371,7 @@ a{color:#5E9BDC;}
     <div class="fac-talking-points"><div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Go phrase by phrase — don't rush. Each one has a cultural reason it exists.</div></div>
 <div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">For <em>osaki ni shitsurei shimasu</em> : act it out. "Imagine everyone's still at their station. You grab your bag. What do you say?" Pause. Let them read it. Have them say it.</div></div>
 <div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">For <em>osewa ni narimashita</em> : set up a scenario. "A Japanese engineer has been here for two weeks. Today is their last day. They say this to you. What do you say back?" (kochira koso / mata yoroshiku)</div></div>
-<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">For</div></div>
+<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">For <em>gokurousama</em> : this is the hierarchy trap — spend extra time here. Say explicitly: "A manager says this to you — you receive it with a nod and say otsukaresama desu back. You do <strong>not</strong> say gokurousama back to them."</div></div>
 <div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Have them practice the back-chain drill for osaki ni — it's in their learner view. Walk them through it step by step.</div></div></div>
   </div>
 
@@ -424,16 +479,16 @@ a{color:#5E9BDC;}
   <div class="fac-card blue" style="margin-bottom:20px;">
     <div class="fac-card-label">💬 Talking Points</div>
     <div class="fac-talking-points"><div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Frame the problem first: "Has anyone ever nodded along in a conversation and had no idea what was just said?" Let them laugh. "That's the nod-along. It creates real miscommunication on a production floor."</div></div>
-<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Introduce <em>mou ichido onegaishimasu</em> : one more time please. Walk through why onegaishimasu connects to yoroshiku onegaishimasu — same polite ask word, different context.</div></div>
+<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Introduce <em>Sumimasen, mou ichido itte moraemasu ka?</em> — excuse me, could you say that one more time? One phrase, no permission detour. Then introduce <em>Yukkuri itte moraemasu ka?</em> — could you say that more slowly? These two pair together: mou ichido first, yukkuri if they repeat at full speed.</div></div>
 <div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Run the back-chain drill together. Display it on their screens. You say step 1, they repeat. Build to the full phrase. This should feel like a chant, not a recitation.</div></div>
-<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Then walk through the recovery sequence: sumimasen → kiite mo ii desu ka → mou ichido → o-namae wa. Have them read each step aloud.</div></div>
+<div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Then walk through the recovery sequence: Sumimasen, mou ichido itte moraemasu ka? — one phrase, no permission detour. Have them say it twice, then try it with a fake scenario.</div></div>
 <div class="fac-tp"><div class="fac-tp-bullet">›</div><div class="fac-tp-text">Key message: "It is not rude to ask again. It's more respectful to ask than to nod and get it wrong."</div></div></div>
   </div>
 
   <div class="fac-card red">
     <div class="fac-card-label">👁 Watch For</div>
     <div class="watch-list"><div class="watch-item"><div class="watch-icon">⚠️</div><div class="watch-text">Some learners will feel <strong>embarrassed</strong> about asking for repetition. Address this head-on: "Your Japanese colleagues would much rather you ask than nod and then do the wrong thing. Asking is professional."</div></div>
-<div class="watch-item"><div class="watch-icon">💡</div><div class="watch-text">If time allows, do a <strong>live role-play</strong>: you say a name (or make one up), the learner misses it, walks through the recovery sequence to ask again. Keep it light.</div></div></div>
+<div class="watch-item"><div class="watch-icon">💡</div><div class="watch-text">If time allows, do a <strong>live role-play</strong>: you say a name (or make one up), the learner misses it, uses mou ichido itte moraemasu ka to ask again. Then deliberately repeat at full speed — they should follow with yukkuri itte moraemasu ka. Keep it light.</div></div></div>
   </div>
 </div>
 <div class="block-panel " id="panel-bow">
@@ -588,6 +643,106 @@ setTimeout(()=>{
     document.getElementById('conn-label').textContent='offline';
   }
 },9000);
+</script>
+</div><!-- /fac-shell -->
+
+<script>
+// ── PIN gate ──
+const CORRECT_PIN = '3985';
+let pinEntry = '';
+
+function pinPress(d){
+  if(pinEntry.length >= 4) return;
+  pinEntry += d;
+  updateDots();
+  if(pinEntry.length === 4) setTimeout(checkPin, 120);
+}
+function pinBack(){
+  pinEntry = pinEntry.slice(0,-1);
+  updateDots();
+  document.getElementById('pin-error').textContent='';
+}
+function pinClear(){
+  pinEntry='';
+  updateDots();
+  document.getElementById('pin-error').textContent='';
+}
+function updateDots(){
+  for(let i=0;i<4;i++){
+    const d=document.getElementById('pd'+i);
+    d.classList.toggle('filled', i < pinEntry.length);
+    d.classList.remove('error');
+  }
+}
+function checkPin(){
+  if(pinEntry === CORRECT_PIN){
+    document.getElementById('pin-gate').style.display='none';
+    document.getElementById('fac-shell').style.display='flex';
+  } else {
+    for(let i=0;i<4;i++) document.getElementById('pd'+i).classList.add('error');
+    document.getElementById('pin-error').textContent='Incorrect PIN — try again';
+    setTimeout(()=>{ pinEntry=''; updateDots(); },900);
+  }
+}
+// Allow keyboard input
+document.addEventListener('keydown', e=>{
+  if(document.getElementById('pin-gate').style.display==='none') return;
+  if(e.key>='0'&&e.key<='9') pinPress(e.key);
+  else if(e.key==='Backspace') pinBack();
+  else if(e.key==='Escape') pinClear();
+});
+
+// Facilitator timer — 30 min, pause/resume
+let facTimerSecs = 30 * 60;
+let facTimerPaused = false;
+let facTimerInterval = null;
+
+function facTimerTick() {
+  if (facTimerPaused) return;
+  facTimerSecs--;
+  const m = Math.floor(facTimerSecs / 60);
+  const s = facTimerSecs % 60;
+  const el = document.getElementById('fac-timer');
+  if (el) {
+    el.textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+    if (facTimerSecs <= 60) el.classList.add('urgent');
+    else el.classList.remove('urgent');
+  }
+  if (facTimerSecs <= 0) clearInterval(facTimerInterval);
+}
+
+function facToggleTimer() {
+  facTimerPaused = !facTimerPaused;
+  const btn = document.getElementById('fac-timer-btn');
+  if (btn) btn.textContent = facTimerPaused ? '▶ Resume' : '⏸ Pause';
+}
+
+// Start timer after PIN is entered
+const _origShowFac = window.onload;
+document.addEventListener('facUnlocked', () => {
+  facTimerInterval = setInterval(facTimerTick, 1000);
+});
+
+// Patch checkPin to fire facUnlocked
+const _origCheckPin = window.checkPin;
+function checkPin() {
+  if (typeof _origCheckPin === 'function') _origCheckPin();
+  // inline logic since checkPin is defined in same scope
+}
+// Hook directly: override after PIN success
+const _pinCheckOrig = checkPin;
+// Instead, patch the PIN gate hide directly
+const _facPinObserver = new MutationObserver(() => {
+  const gate = document.getElementById('pin-gate');
+  if (gate && gate.style.display === 'none' && !facTimerInterval) {
+    facTimerInterval = setInterval(facTimerTick, 1000);
+    _facPinObserver.disconnect();
+  }
+});
+document.addEventListener('DOMContentLoaded', () => {
+  const gate = document.getElementById('pin-gate');
+  if (gate) _facPinObserver.observe(gate, { attributes: true, attributeFilter: ['style'] });
+});
 </script>
 </body>
 </html>
