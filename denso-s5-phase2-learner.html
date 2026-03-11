@@ -193,9 +193,14 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 .ub-slot.filled{border-color:var(--gold-border);color:var(--text);border-style:solid;background:var(--gold-bg);}
 .ub-plus{font-family:'IBM Plex Mono',monospace;font-size:16px;color:var(--text-3);}
 .ub-chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
-.ub-chip{background:var(--surface-2);border-radius:4px;padding:8px 14px;font-size:13px;color:var(--text);cursor:pointer;transition:all 0.15s;border:1.5px solid var(--border);font-family:'Inter',sans-serif;}
+.ub-chip{display:inline-flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--surface-2);border-radius:6px;padding:8px 12px;cursor:pointer;transition:all 0.15s;border:1.5px solid var(--border);font-family:'IBM Plex Mono',monospace;margin:3px;}
 .ub-chip:hover{border-color:var(--gold-border);background:var(--gold-bg);}
-.ub-chip.used{opacity:0.4;cursor:default;pointer-events:none;}
+.ub-chip.used{border-color:var(--teal);background:var(--teal-dim);opacity:0.6;}
+.chip-roman{font-size:13px;font-weight:600;color:var(--text);}
+.chip-jp-sub{font-size:10px;color:var(--text-3);font-family:'Noto Sans JP',sans-serif;opacity:0.75;}
+.chip-en{font-size:10px;color:var(--text-2);letter-spacing:0.3px;}
+.chip-badge{font-size:9px;background:var(--gold);color:#fff;border-radius:3px;padding:1px 4px;letter-spacing:1px;text-transform:uppercase;font-family:'IBM Plex Mono',monospace;}
+.slot-jp-sub{display:block;font-size:10px;font-weight:400;color:var(--text-3);font-family:'Noto Sans JP',sans-serif;opacity:0.7;margin-top:2px;}
 .ub-reset{font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:1.5px solid var(--border);border-radius:4px;color:var(--text-3);background:none;padding:6px 14px;cursor:pointer;transition:all 0.15s;}
 .ub-reset:hover{border-color:var(--border-strong);color:var(--text);}
 
@@ -441,7 +446,6 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
           <div style="font-size:13px;color:var(--offwhite);line-height:1.6;">The bow — the non-verbal layer that makes every phrase in this unit land properly.</div>
         </div>
       </div>
-      <button class="btn btn-green" onclick="showTab('blockA'); document.querySelectorAll('.tnav-btn')[1].click()">Start with Block A →</button>
   </div>
 </div>
 <div class="block-section locked" id="section-blockA" data-block="blockA">
@@ -500,7 +504,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
             <td><button class="speak-btn" onclick="speak('よろしくお願いします')">🔊</button></td>
           </tr>
           <tr>
-            <td><div class="td-jp">よろしくお願いいたします</div><span class="td-reg reg-formal">formal</span></td>
+            <td><div class="td-jp">よろしくお願いいたします</div><span class="td-reg reg-formal">very formal</span></td>
             <td><div class="td-romaji">Yoroshiku onegai itashimasu</div><div class="td-phonetic">yoh-roh-shee-koo oh-neh-guy ee-tah-shee-mas</div></td>
             <td class="td-en">More formal — use in meetings, first encounters with senior staff, or written notes.</td>
             <td><button class="speak-btn" onclick="speak('よろしくお願いいたします')">🔊</button></td>
@@ -548,14 +552,14 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
             <td><div class="td-jp">お先に失礼します</div><span class="td-reg reg-use">use this</span></td>
             <td><div class="td-romaji">Osaki ni shitsurei shimasu</div><div class="td-phonetic">oh-sah-kee nee shee-tsoo-reh shee-mas</div></td>
             <td class="td-en">Leaving before your colleagues. Acknowledges you're going ahead while they're still working.</td>
-            <td><div class="td-note">お疲れ様でした</div></td>
+            <td><div class="td-note">お疲れ様でした<br><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-2);">Otsukaresama deshita</span><br><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);">oht-tsoo-kah-reh-sah-mah desh-tah</span></div></td>
             <td><button class="speak-btn" onclick="speak('お先に失礼します')">🔊</button></td>
           </tr>
           <tr>
             <td><div class="td-jp">お世話になりました</div><span class="td-reg reg-use">use this</span></td>
             <td><div class="td-romaji">Osewa ni narimashita</div><div class="td-phonetic">oh-seh-wah nee nah-ree-mash-tah</div></td>
             <td class="td-en">Wrapping up a project, someone's last day, or end of a rotation. "You looked after me / we had a good run."</td>
-            <td><div class="td-note">こちらこそ / またよろしく</div></td>
+            <td><div class="td-note">こちらこそ / またよろしく<br><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--text-2);">Kochira koso / Mata yoroshiku</span><br><span style="font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--text-3);">koh-chee-rah koh-soh / mah-tah yoh-roh-shee-koo</span></div></td>
             <td><button class="speak-btn" onclick="speak('お世話になりました')">🔊</button></td>
           </tr>
           <tr>
@@ -616,7 +620,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 
       <!-- Equation -->
       <div class="desu-hero">
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:3px;color:var(--teal);text-transform:uppercase;margin-bottom:16px;">The Pattern</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;letter-spacing:3px;color:var(--teal);text-transform:uppercase;margin-bottom:16px;">The Pattern</div>
         <div class="desu-equation">
           <div class="desu-block topic">
             <div class="desu-jp">X は</div>
@@ -638,12 +642,8 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
           <div class="desu-arrow">→</div>
           <div style="font-size:14px;color:var(--offwhite);padding:12px 0;">As for X — it is Y.</div>
         </div>
-        <div style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--mid);margin-top:8px;">To make it a question: add か (ka) at the end → desu<span style="color:var(--purple)"> ka</span>？</div>
+        <div style="font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:600;color:var(--text-2);margin-top:14px;padding:10px 14px;background:var(--surface-2);border-radius:6px;border-left:3px solid var(--purple);">To make it a question: add か (ka) at the end → desu<span style="color:var(--purple)"> ka</span>？</div>
       </div>
-
-      <div class="div-heading">You Already Know These Sentences</div>
-      <div class="section-sub" style="margin-bottom:16px;">Tap any card to hear it. Every example below uses only vocabulary you already have.</div>
-      <div class="sentence-cards" id="sent-cards"></div>
 
       <!-- Unlock builder -->
       <div class="div-heading">Sentence Builder — Try It Yourself</div>
@@ -654,7 +654,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
       <div class="unlock-builder">
         <div class="ub-label">Build a sentence using X は Y です</div>
         <div class="ub-row">
-          <div class="ub-slot" id="ub-topic">[ Topic は ]</div>
+          <div class="ub-slot" id="ub-topic">[ Topic wa ]</div>
           <div class="ub-plus">+</div>
           <div class="ub-slot" id="ub-comment">[ Y ]</div>
           <div class="ub-plus">+</div>
@@ -787,10 +787,6 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
           <div class="bow-text">Deep formal bows aren't practical or expected on a production floor. A <strong>small head nod</strong> while saying the phrase is the norm. You're showing awareness and respect in a working context — not at a formal dinner.</div>
         </div>
       </div>
-
-      <div style="text-align:center;margin-top:32px;">
-        <button class="btn btn-green" onclick="alert('Proceed to Phase 3 — Floor Sim')">Ready — Move to Floor Sim →</button>
-      </div>
   </div>
 </div>
     </div>
@@ -845,6 +841,9 @@ function speak(text) {
     'さようなら。':                                     'sayounara',
     'さようなら！':                                     'sayounara',
     'じゃまた':                                         'ja-mata',
+    'じゃ、また':                                        'ja-mata',
+    'じゃ、また。':                                      'ja-mata',
+    'じゃ、また！':                                      'ja-mata',
     'じゃまた。':                                       'ja-mata',
     'じゃまた！':                                       'ja-mata',
     'お疲れ様です':                                     'otsukaresama-desu',
@@ -892,6 +891,21 @@ function speak(text) {
     'わかりません。':                                   'wakarimasen',
     'こんにちは。お疲れ様です。':                       'konnichiwa-otsukaresama-desu',
     '...この手順でお願いします。いいですか？':          'kono-tejun-de-onegaishimasu-ii-desu-ka',
+    'わたしは田中です。':                               'watashi-tanaka',
+    'わたしは山田です。':                               'watashi-yamada',
+    'わたしはエンジニアです。':                         'watashi-enjinia',
+    'これはだめです。':                                 'kore-dame',
+    'これはなんです。':                                 'kore-nan',
+    '名前は田中です。':                                 'namae-tanaka',
+    '名前は山田です。':                                 'namae-yamada',
+    '名前はなんです。':                                 'namae-nan',
+    'お名前は田中です。':                               'onamae-tanaka',
+    'お名前は山田です。':                               'onamae-yamada',
+    'お名前はなんです。':                               'onamae-nan',
+    'お仕事はエンジニアです。':                         'oshigoto-enjinia',
+    'お仕事はなんです。':                               'oshigoto-nan',
+    '〜です':                                             'desu',
+    'です':                                               'desu',
   };
 
   // last-played tracker per phrase for no-repeat shuffle
@@ -1011,6 +1025,7 @@ function openBlock(id){
   // init back-chain drills when their block opens
   if(id==='blockB') initBackchain('bc-osaki');
   if(id==='mou')    initBackchain('bc-mou');
+  if(id==='desu')   renderBuilder();
 }
 function closeBlock(id){
   document.getElementById('section-'+id).classList.remove('open');
@@ -1062,6 +1077,10 @@ const VERDICTS = {
   'namae:dame':      { v:'broken',   note:'My name is "not okay"? Structurally it parses, but this combination has no meaningful use.' },
   'namae:nan':       { v:'natural',  note:'名前はなんですか — What is your (someone\'s) name? This is a real question form, though note: お名前は would be more polite when asking someone directly.' },
   'namae:onamae':    { v:'broken',   note:'名前 can\'t be its own comment — you can\'t say "my name is name." These are both nouns of the same type.' },
+  'namae:namae':     { v:'broken',   note:'名前は名前です — "The name is name." Circular and meaningless — both slots are the same word. Try a different combination.' },
+
+  // お名前は missing combo
+  'onamae:onamae':   { v:'broken',   note:'お名前はお名前です — "Your honorable name is honorable name." Both slots are the same word. This is circular and has no meaning.' },
 
   // お名前は (o-namae — polite, asking the LISTENER'S name)
   'onamae:tanaka':   { v:'natural',  note:'お名前は田中です — Your name is Tanaka (polite). This works as a confirmation: "So your name is Tanaka?" The お- prefix is correct here since you\'re referring to the listener\'s name.' },
@@ -1111,10 +1130,32 @@ const comments = [
 
 
 
+window.addEventListener('load', () => { renderBuilder(); });
+function renderBuilder() {
+  const tc = document.getElementById('ub-topic-chips');
+  const cc = document.getElementById('ub-comment-chips');
+  if (!tc || !cc) return;
+  tc.innerHTML = topics.map((t,i) =>
+    `<button class="ub-chip" id="tc-${i}" onclick="selectTopic(topics[${i}],${i})">
+      <span class="chip-roman">${t.roman}</span>
+      <span class="chip-jp-sub">${t.text}</span>
+      <span class="chip-en">${t.en}</span>
+      ${t.badge ? `<span class="chip-badge">${t.badge}</span>` : ''}
+    </button>`
+  ).join('');
+  cc.innerHTML = comments.map((c,i) =>
+    `<button class="ub-chip" id="cc-${i}" onclick="selectComment(comments[${i}],${i})">
+      <span class="chip-roman">${c.roman}</span>
+      <span class="chip-jp-sub">${c.text}</span>
+      <span class="chip-en">${c.en}</span>
+    </button>`
+  ).join('');
+}
+
 let ubTopic=null,ubComment=null;
 function selectTopic(t,i){
   ubTopic=t;
-  document.getElementById('ub-topic').textContent=t.text;
+  document.getElementById('ub-topic').innerHTML=t.roman+'<span class="slot-jp-sub">'+t.text+'</span>';
   document.getElementById('ub-topic').classList.add('filled');
   document.querySelectorAll('[id^="tc-"]').forEach(b=>b.classList.remove('used'));
   document.getElementById('tc-'+i).classList.add('used');
@@ -1122,7 +1163,7 @@ function selectTopic(t,i){
 }
 function selectComment(c,i){
   ubComment=c;
-  document.getElementById('ub-comment').textContent=c.text;
+  document.getElementById('ub-comment').innerHTML=c.roman+'<span class="slot-jp-sub">'+c.text+'</span>';
   document.getElementById('ub-comment').classList.add('filled');
   document.querySelectorAll('[id^="cc-"]').forEach(b=>b.classList.remove('used'));
   document.getElementById('cc-'+i).classList.add('used');
@@ -1151,18 +1192,25 @@ function updateBuilderResult(){
   box.style.background=s.bg; box.style.border=s.border;
   box.style.borderRadius='6px'; box.style.padding='14px 18px';
   icon.textContent=s.icon; label.textContent=s.label; label.style.color=s.color;
-  sent.textContent=full; sent.style.color='var(--text)';
-  sentRoman.textContent=roman;
+  sent.innerHTML='<div style="font-size:12px;font-weight:400;color:var(--text-3);font-family:\'Noto Sans JP\',sans-serif;margin-bottom:4px;">'+full+'</div><span style="font-family:\'IBM Plex Mono\',monospace;font-size:18px;font-weight:700;">'+roman+'</span>'; sent.style.color='var(--text)';
+  sentRoman.textContent=''; sentRoman.style.display='none';
   note.textContent=result.note; note.style.color='var(--text-2)';
-  if(result.v!=='broken'){spk.style.display='inline-block';window._ubFull=full;}
+  const AUDIO_SENTENCES = new Set([
+    'わたしは田中です。','わたしは山田です。','わたしはエンジニアです。',
+    '名前は田中です。','名前は山田です。','名前はなんです。',
+    'お名前は田中です。','お名前は山田です。','お名前はなんです。',
+    'お仕事はエンジニアです。','お仕事はなんです。',
+    'これはだめです。','これはなんです。',
+  ]);
+  if(AUDIO_SENTENCES.has(full)){spk.style.display='inline-block';window._ubFull=full;}
   else{spk.style.display='none';window._ubFull=null;}
 }
 function speakBuilder(){if(window._ubFull)speak(window._ubFull);}
 function resetBuilder(){
   ubTopic=null;ubComment=null;
-  document.getElementById('ub-topic').textContent='[ Topic は ]';
+  document.getElementById('ub-topic').innerHTML='[ Topic wa ]';
   document.getElementById('ub-topic').classList.remove('filled');
-  document.getElementById('ub-comment').textContent='[ Y ]';
+  document.getElementById('ub-comment').innerHTML='[ Y ]';
   document.getElementById('ub-comment').classList.remove('filled');
   document.getElementById('ub-result-box').style.display='none';
   document.getElementById('ub-speak-btn').style.display='none';

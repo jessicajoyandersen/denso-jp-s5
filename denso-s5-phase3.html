@@ -483,12 +483,12 @@ const cueCards=[
    situation:"End of a long shift. Your Japanese supervisor walks past and makes eye contact with you.",
    hint:"They look tired too. What do you say?",
    romaji:'Otsukaresama deshita.',phonetic:'oht-tsoo-kah-reh-sah-mah desh-tah',
-   jp:'お疲れ様でした。',en:"Good work today. (Completed shift — warm, ritual close.)"},
+   jp:'お疲れ様でした。',en:"Good work today. <strong>(Completed shift — warm, ritual close.)</strong>"},
   {tag:'tag-osaki',tagLabel:'Osaki ni',
    situation:"It's 4:45 PM. Your shift ends 30 minutes before everyone else. You grab your bag. Your Japanese colleagues are still at their stations.",
    hint:"You're leaving before them. What do you say as you head out?",
    romaji:'Osaki ni shitsurei shimasu.',phonetic:'oh-sah-kee nee shee-tsoo-reh shee-mas',
-   jp:'お先に失礼します。',en:"Excuse me for leaving first. (Acknowledge you're leaving early.)"},
+   jp:'お先に失礼します。',en:"Excuse me for leaving first. <strong>(Acknowledge you're leaving early.)</strong>"},
   {tag:'tag-yoroshiku',tagLabel:'Yoroshiku',
    situation:"You've just finished briefing a Japanese colleague on the task you're handing off at shift change.",
    hint:"You're counting on them to handle it well. Close the handoff.",
@@ -505,12 +505,13 @@ const cueCards=[
    romaji:'Sumimasen, mou ichido itte moraemasu ka?',
    phonetic:'soo-mee-mah-sen, moh ee-chee-doh it-teh moh-reh-mas kah',
    jp:'すみません、もう一度言ってもらえますか？',
-   en:"Excuse me, may I ask? One more time please. (Full recovery — polite, professional, no nodding along.)"},
+   en:"Excuse me, may I ask? One more time please. <strong>(Full recovery — polite, professional, no nodding along.)</strong>"},
   {tag:'tag-desu',tagLabel:'X wa Y desu',
    situation:"A Japanese engineer just arrived at your station and asks your name and job title.",
    hint:"Give a full introduction: name + job title using desu.",
+   note:"💡 役職 (yakushoku) means job title — e.g. operator, team leader, engineer. Use your actual title or just say your department.",
    romaji:'[Name] desu. [Job title] desu.',phonetic:'[name] des. [job] des',
-   jp:'[名前]です。[役職]です。',en:"I'm [name]. I'm a [job title]. (X wa implied — topic dropped when context is clear.)"}
+   jp:'[名前]です。[役職]です。',en:"I'm [name]. I'm a [job title]. <strong>(X wa implied — topic dropped when context is clear.)</strong>"}
 ];
 let cueCurrent=0;
 function initCue(){cueCurrent=0;buildCueDots();loadCueCard();}
@@ -524,6 +525,8 @@ function loadCueCard(){
   document.getElementById('cue-tag').textContent=c.tagLabel;
   document.getElementById('cue-situation').textContent=c.situation;
   document.getElementById('cue-hint').textContent='Hint: '+c.hint;
+  const noteEl = document.getElementById('cue-note');
+  if(noteEl){ noteEl.textContent = c.note || ''; noteEl.style.display = c.note ? 'block' : 'none'; }
   document.getElementById('cue-counter').textContent='Card '+(cueCurrent+1)+' of '+cueCards.length;
   document.getElementById('cue-answer').style.display='none';
   document.getElementById('cue-reveal-btn').style.display='inline-block';
@@ -570,6 +573,9 @@ function speak(text) {
     'さようなら。':                                     'sayounara',
     'さようなら！':                                     'sayounara',
     'じゃまた':                                         'ja-mata',
+    'じゃ、また':                                        'ja-mata',
+    'じゃ、また。':                                      'ja-mata',
+    'じゃ、また！':                                      'ja-mata',
     'じゃまた。':                                       'ja-mata',
     'じゃまた！':                                       'ja-mata',
     'お疲れ様です':                                     'otsukaresama-desu',
@@ -617,6 +623,8 @@ function speak(text) {
     'わかりません。':                                   'wakarimasen',
     'こんにちは。お疲れ様です。':                       'konnichiwa-otsukaresama-desu',
     '...この手順でお願いします。いいですか？':          'kono-tejun-de-onegaishimasu-ii-desu-ka',
+    '〜です':                                             'desu',
+    'です':                                               'desu',
   };
 
   // last-played tracker per phrase for no-repeat shuffle
@@ -681,7 +689,7 @@ const scenarios = [
     prompt:"You respond:",
     choices:[
       {romaji:"Otsukaresama deshita.",jp:"お疲れ様でした。",en:"End-of-shift phrase — wrong time of day",correct:false},
-      {romaji:"Ohayou gozaimasu!",jp:"おはようございます！",en:"Good morning (formal) — mirror it back",correct:true},
+      {romaji:"Ohayou gozaimasu!",jp:"おはようございます！",en:"Good morning <strong>(formal)</strong> — mirror it back",correct:true},
       {romaji:"Osaki ni shitsurei shimasu.",jp:"お先に失礼します。",en:"I\'m leaving first — wrong context entirely",correct:false},
       {romaji:"Hajimemashite.",jp:"はじめまして。",en:"Nice to meet you — first-time only, not a daily greeting",correct:false},
     ],
@@ -787,7 +795,7 @@ const scenarios = [
       {romaji:"Gokurousama desu.",jp:"ご苦労様です。",en:"Praising their hard work — completely wrong context",correct:false},
       {romaji:"Hajimemashite.",jp:"はじめまして。",en:"Re-introducing yourself — doesn\'t solve the problem",correct:false},
     ],
-    fb_correct:"✅ Correct. Sumimasen, o-namae wo mou ichido itte moraemasu ka? — excuse me, could you say your name one more time? Specific, polite, and immediately clear. No permission detour needed.",
+    fb_correct:"✅ Correct. Sumimasen, o-namae wo mou ichido itte moraemasu ka? — 「を」(wo) is the object marker; it just means the name is what you're asking to hear again. You don't need to memorize it yet — the whole phrase works as a unit. — excuse me, could you say your name one more time? Specific, polite, and immediately clear. No permission detour needed.",
     fb_wrong:"The right move: Sumimasen, o-namae wo mou ichido itte moraemasu ka? — name the thing you missed (o-namae), ask them to say it again (itte moraemasu ka). Nodding along creates real floor risk."
   },
 
@@ -928,6 +936,10 @@ function answerScenario(idx){
   fb.textContent=correct?sc.fb_correct:sc.fb_wrong;
   fb.className='sim-feedback show '+(correct?'ok':'bad');
   document.getElementById('sim-next').style.display='block';
+  // auto-play the correct answer audio
+  const correctChoice = sc.choices.find(ch=>ch.correct);
+  const audioText = correctChoice && correctChoice.jp ? correctChoice.jp : (sc.jp || null);
+  if(audioText) setTimeout(()=>speak(audioText), 400);
 }
 
 function nextScenario(){currentScenario++;loadScenario();}

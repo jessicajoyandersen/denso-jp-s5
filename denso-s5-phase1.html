@@ -442,6 +442,9 @@ function speak(text) {
     'さようなら。':                                     'sayounara',
     'さようなら！':                                     'sayounara',
     'じゃまた':                                         'ja-mata',
+    'じゃ、また':                                        'ja-mata',
+    'じゃ、また。':                                      'ja-mata',
+    'じゃ、また！':                                      'ja-mata',
     'じゃまた。':                                       'ja-mata',
     'じゃまた！':                                       'ja-mata',
     'お疲れ様です':                                     'otsukaresama-desu',
@@ -489,6 +492,8 @@ function speak(text) {
     'わかりません。':                                   'wakarimasen',
     'こんにちは。お疲れ様です。':                       'konnichiwa-otsukaresama-desu',
     '...この手順でお願いします。いいですか？':          'kono-tejun-de-onegaishimasu-ii-desu-ka',
+    '〜です':                                             'desu',
+    'です':                                               'desu',
   };
 
   // last-played tracker per phrase for no-repeat shuffle
@@ -549,20 +554,18 @@ const reviewVocab = [
   {jp:"火事",romaji:"Kaji",phonetic:"kah-jee",en:"Fire!",cat:"Safety"},
   {jp:"助けて",romaji:"Tasukete",phonetic:"tah-soo-keh-teh",en:"Help me!",cat:"Safety"},
   {jp:"どけ",romaji:"Doke",phonetic:"doh-keh",en:"Move out of the way!",cat:"Safety"},
-  {jp:"おはようございます",romaji:"Ohayou gozaimasu",phonetic:"oh-ha-yoh go-zigh-mas",en:"Good morning (formal)",cat:"Greeting"},
+  {jp:"おはようございます",romaji:"Ohayou gozaimasu",phonetic:"oh-ha-yoh go-zigh-mas",en:"Good morning <strong>(formal)</strong>",cat:"Greeting"},
   {jp:"こんにちは",romaji:"Konnichiwa",phonetic:"kon-nee-chee-wah",en:"Good afternoon / Hello",cat:"Greeting"},
   {jp:"こんばんは",romaji:"Konbanwa",phonetic:"kon-bahn-wah",en:"Good evening",cat:"Greeting"},
-  {jp:"お疲れ様でした",romaji:"Otsukaresama deshita",phonetic:"oht-tsoo-kah-reh-sah-mah desh-tah",en:"Good work today (end of shift)",cat:"Greeting"},
+  {jp:"お疲れ様でした",romaji:"Otsukaresama deshita",phonetic:"oht-tsoo-kah-reh-sah-mah desh-tah",en:"Good work today <strong>(end of shift)</strong>",cat:"Greeting"},
   {jp:"失礼します",romaji:"Shitsurei shimasu",phonetic:"shee-tsoo-reh shee-mas",en:"Excuse me / I'm leaving",cat:"Greeting"},
   {jp:"じゃ、また",romaji:"Ja, mata",phonetic:"jah, mah-tah",en:"See you later",cat:"Greeting"},
-  {jp:"さようなら",romaji:"Sayounara",phonetic:"sah-yoh-nah-rah",en:"Goodbye (formal)",cat:"Greeting"},
-  {jp:"はじめまして",romaji:"Hajimemashite",phonetic:"hah-jee-meh-mash-teh",en:"Nice to meet you (first time)",cat:"Self-Intro"},
-  {jp:"〜です",romaji:"~ desu",phonetic:"~ des",en:"I am ~ / It is ~ (polite period)",cat:"Self-Intro"},
+  {jp:"さようなら",romaji:"Sayounara",phonetic:"sah-yoh-nah-rah",en:"Goodbye <strong>(formal)</strong>",cat:"Greeting"},
+  {jp:"はじめまして",romaji:"Hajimemashite",phonetic:"hah-jee-meh-mash-teh",en:"Nice to meet you <strong>(first time)</strong>",cat:"Self-Intro"},
+  {jp:"〜です",romaji:"~ desu",phonetic:"~ des",en:"I am ~ / It is ~ <strong>(polite period)</strong>",cat:"Self-Intro"},
   {jp:"よろしくお願いします",romaji:"Yoroshiku onegaishimasu",phonetic:"yoh-roh-shee-koo oh-neh-guy-mas",en:"Please treat me well / Counting on you",cat:"Self-Intro"},
-  {jp:"おはよう",romaji:"Ohayou",phonetic:"oh-ha-yoh",en:"Good morning (casual)",cat:"Greeting"},
-  {jp:"お疲れ様です",romaji:"Otsukaresama desu",phonetic:"oht-tsoo-kah-reh-sah-mah des",en:"Good work (mid-shift, present)",cat:"Greeting"},
-  {jp:"もう一度言ってもらえますか？",romaji:"Mou ichido itte moraemasu ka?",phonetic:"moh ee-chee-doh it-teh moh-reh-mas kah",en:"Could you say that one more time?",cat:"Recovery"},
-  {jp:"ゆっくり言ってもらえますか？",romaji:"Yukkuri itte moraemasu ka?",phonetic:"yook-koo-ree it-teh moh-reh-mas kah",en:"Could you say that more slowly?",cat:"Recovery"},
+  {jp:"おはよう",romaji:"Ohayou",phonetic:"oh-ha-yoh",en:"Good morning <strong>(casual)</strong>",cat:"Greeting"},
+  {jp:"お疲れ様です",romaji:"Otsukaresama desu",phonetic:"oht-tsoo-kah-reh-sah-mah des",en:"Good work <strong>(mid-shift, present)</strong>",cat:"Greeting"},
 ];
 
 
@@ -637,7 +640,7 @@ function loadBlitz(){
   opts.forEach(o=>{
     const btn = document.createElement('button');
     btn.className  = 'blitz-choice';
-    btn.textContent= o.en;
+    btn.innerHTML  = o.en;
     btn.onclick    = ()=>checkBlitz(btn, o.en===card.en, card);
     ch.appendChild(btn);
   });
@@ -658,7 +661,7 @@ function checkBlitz(btn, correct, card){
     if(p1Streak>p1BestStreak) p1BestStreak=p1Streak;
     mastered.add(card.romaji);
     queue.shift(); // retire from front of queue
-    fb.textContent = '✅ Mastered — "'+card.romaji+'" = "'+card.en+'"';
+    fb.innerHTML   = '✅ Mastered — "'+card.romaji+'" = "'+card.en+'"';
     fb.classList.add('show','ok');
     // Show a gentle "X left" nudge if there are still cards
     if(queue.length > 0){
@@ -669,9 +672,9 @@ function checkBlitz(btn, correct, card){
     p1Streak = 0;
     // Highlight the correct button
     document.querySelectorAll('.blitz-choice').forEach(b=>{
-      if(b.textContent===card.en) b.classList.add('correct');
+      if(b.innerHTML===card.en) b.classList.add('correct');
     });
-    fb.textContent = '❌ Not yet — "'+card.romaji+'" = "'+card.en+'" ('+card.phonetic+') — coming back around';
+    fb.innerHTML   = '❌ Not yet — "'+card.romaji+'" = "'+card.en+'" ('+card.phonetic+') — coming back around';
     fb.classList.add('show','bad');
     // Re-queue the card: remove from front, insert at a random spot 2–5 cards back
     queue.shift();
