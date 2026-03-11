@@ -446,7 +446,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
     <div class="scenario-counter" id="sc-counter">Scenario 1 of 10</div>
     <div id="scenario-area" aria-live="polite"></div>
     <div style="text-align:center;margin-top:20px;">
-      <button class="btn btn-secondary" onclick="finishSim()">Finish Session →</button>
+      <button class="btn btn-secondary" onclick="if(confirm('End the session now? Your score will be saved.'))finishSim()" style="opacity:0.5;font-size:11px;padding:8px 16px;margin-top:24px;">Finish Session →</button>
     </div>
   </div>
 </div>
@@ -912,9 +912,9 @@ function loadScenario(){
     <div class="sc-setup">${sc.setup}</div>
     ${bubbleHtml}
     <div class="sc-prompt">${sc.prompt}</div>
-    <div class="sim-choices">${choicesHtml}</div>`;
-  document.getElementById('sim-fb').className='sim-feedback';
-  document.getElementById('sim-next').style.display='none';
+    <div class="sim-choices">${choicesHtml}</div>
+    <div class="sim-feedback" id="sim-fb"></div>
+    <div style="text-align:center;margin-top:12px;"><button class="btn btn-primary" id="sim-next" style="display:none" onclick="nextScenario()">Next Scenario →</button></div>`;
 }
 
 function answerScenario(idx){
@@ -931,7 +931,7 @@ function answerScenario(idx){
   const fb=document.getElementById('sim-fb');
   fb.innerHTML=correct?sc.fb_correct:sc.fb_wrong;
   fb.className='sim-feedback show '+(correct?'ok':'bad');
-  document.getElementById('sim-next').style.display='block';
+  document.getElementById('sim-next').style.display='inline-flex';
   const correctChoice=sc.choices.find(ch=>ch.correct);
   const audioText=correctChoice&&correctChoice.jp?correctChoice.jp:(sc.jp||null);
   if(audioText)setTimeout(()=>speak(audioText),400);
