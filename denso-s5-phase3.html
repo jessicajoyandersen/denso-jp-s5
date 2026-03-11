@@ -634,6 +634,8 @@ function speak(text) {
 
   text = text.trim();
   const slug = AUDIO_MAP[text];
+  console.log('[speak] text='+JSON.stringify(text)+' slug='+slug);
+  if (slug) {
     // single file per phrase for now (3-voice shuffle ready when v2/v3 added)
     const variants = [slug + '.wav'];
     // when v2/v3 exist, swap to: [slug+'-v1.wav', slug+'-v2.wav', slug+'-v3.wav']
@@ -820,7 +822,7 @@ const scenarios = [
     fb_wrong:"Nodding along creates real production risk. Sumimasen, mou ichido itte moraemasu ka? is the right phrase — polite and direct."
   },
 
-  // ── SCENARIO 15 — Hierarchy trap: junior colleague says gokurousama to you ──,
+  // ── SCENARIO 15 — Hierarchy trap: junior colleague says gokurousama to you ──
 
   {
     icon:"⚠️",
@@ -841,7 +843,7 @@ const scenarios = [
     fb_wrong:"Gokurousama is a downward phrase — supervisors say it to workers, not the other way around. When a junior says it to you, you receive it and respond with otsukaresama deshita, which works in all directions."
   },
 
-  // ── SCENARIO 16 — Multi-turn: supervisor gives feedback, then closes ──,
+  // ── SCENARIO 16 — Multi-turn: supervisor gives feedback, then closes ──
 
   {
     icon:"🚪",
