@@ -375,7 +375,7 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
 /* facilitator timer overlay */
 </style>
 </head>
-<body>
+
 <!-- SPLASH -->
 <div id="screen-splash" class="screen active">
   <div class="splash-inner">
@@ -475,9 +475,9 @@ button:focus-visible{outline:2px solid var(--red);outline-offset:2px;}
   </div>
 </div>
 
+
 <script>
 
-// CUE CARDS
 const cueCards=[
   {tag:'tag-otsukare',tagLabel:'Otsukaresama',
    situation:"End of a long shift. Your Japanese supervisor walks past and makes eye contact with you.",
@@ -514,20 +514,22 @@ const cueCards=[
    jp:'[名前]です。[役職]です。',en:"I'm [name]. I'm a [job title]. <strong>(X wa implied — topic dropped when context is clear.)</strong>"}
 ];
 let cueCurrent=0;
+
 function initCue(){cueCurrent=0;buildCueDots();loadCueCard();}
+
 function buildCueDots(){
   const d=document.getElementById('cue-dots');
   d.innerHTML=cueCards.map((_,i)=>`<div class="cue-dot" id="cdot-${i}"></div>`).join('');
 }
+
 function loadCueCard(){
-  const c=cueCards[cueCurrent];
-  document.getElementById('cue-tag').className='cue-pattern-tag '+c.tag;
-  document.getElementById('cue-tag').textContent=c.tagLabel;
-  document.getElementById('cue-situation').textContent=c.situation;
-  document.getElementById('cue-hint').textContent='Hint: '+c.hint;
-  const noteEl = document.getElementById('cue-note');
-  if(noteEl){ noteEl.textContent = c.note || ''; noteEl.style.display = c.note ? 'block' : 'none'; }
-  document.getElementById('cue-counter').textContent='Card '+(cueCurrent+1)+' of '+cueCards.length;
+  const card=cueCards[cueCurrent];
+  document.getElementById('cue-tag').className='cue-pattern-tag '+card.tag;
+  document.getElementById('cue-tag').textContent=card.tagLabel;
+  document.getElementById('cue-situation').textContent=card.situation;
+  document.getElementById('cue-hint').textContent='Hint: '+card.hint;
+  const noteEl=document.getElementById('cue-note');
+  if(noteEl){noteEl.textContent=card.note||'';noteEl.style.display=card.note?'block':'none';}
   document.getElementById('cue-answer').style.display='none';
   document.getElementById('cue-reveal-btn').style.display='inline-block';
   document.getElementById('cue-next-btn').style.display='none';
@@ -536,26 +538,29 @@ function loadCueCard(){
     if(!dot)continue;
     dot.className='cue-dot'+(i<cueCurrent?' seen':i===cueCurrent?' current':'');
   }
+  document.getElementById('cue-counter').textContent='Card '+(cueCurrent+1)+' of '+cueCards.length;
 }
+
 function revealCue(){
-  const c=cueCards[cueCurrent];
-  document.getElementById('cue-romaji').textContent=c.romaji;
-  document.getElementById('cue-phonetic').textContent=c.phonetic;
-  document.getElementById('cue-jp').textContent=c.jp;
-  document.getElementById('cue-en').innerHTML=c.en;
+  const card=cueCards[cueCurrent];
+  document.getElementById('cue-romaji').textContent=card.romaji;
+  document.getElementById('cue-phonetic').textContent=card.phonetic;
+  document.getElementById('cue-jp').textContent=card.jp;
+  document.getElementById('cue-en').innerHTML=card.en;
   document.getElementById('cue-answer').style.display='block';
   document.getElementById('cue-reveal-btn').style.display='none';
   document.getElementById('cue-next-btn').style.display='inline-block';
 }
+
 function speakCue(){
-  speak(cueCards[cueCurrent].jp.trim());
+  speak(cueCards[cueCurrent].jp);
 }
+
 function nextCue(){
   cueCurrent++;
   if(cueCurrent>=cueCards.length){showScreen('screen-p3');loadScenario();return;}
   loadCueCard();
 }
-
 
 function speak(text) {
   const AUDIO_MAP = {
@@ -632,9 +637,7 @@ function speak(text) {
   // last-played tracker per phrase for no-repeat shuffle
   if (!window._speakLast) window._speakLast = {};
 
-  text = text.trim();
   const slug = AUDIO_MAP[text];
-  console.log('[speak] text='+JSON.stringify(text)+' slug='+slug);
   if (slug) {
     // single file per phrase for now (3-voice shuffle ready when v2/v3 added)
     const variants = [slug + '.wav'];
@@ -663,24 +666,32 @@ function speak(text) {
   u.lang = 'ja-JP'; u.rate = 0.82;
   window.speechSynthesis.speak(u);
 }
+
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
+
 function startTimer(phase,secs,elId){
-  if(!window._timers) window._timers={};
+  if(!window._timers)window._timers={};
   clearInterval(window._timers[phase]);
   let s=secs;
   const el=document.getElementById(elId);
   function tick(){
-    s--;const m=Math.floor(s/60),sec=s%60;
-    el.textContent=String(m).padStart(2,'0')+':'+String(sec).padStart(2,'0');
-    if(s<=60)el.classList.add('urgent');else el.classList.remove('urgent');
-    if(s<=0)clearInterval(window._timers[phase]);
+    if(!el)return;
+    const m=Math.floor(s/60),sec=s%60;
+    el.textContent=(m<10?'0':'')+m+':'+(sec<10?'0':'')+sec;
+    if(s<=60){el.style.color='var(--wrong)';el.style.fontWeight='700';}
+    if(s<=0){clearInterval(window._timers[phase]);return;}
+    s--;
   }
+  tick();
   window._timers[phase]=setInterval(tick,1000);
 }
-function stopTimer(p){if(window._timers)clearInterval(window._timers[p]);}
+
+function stopTimer(phase){
+  if(window._timers)clearInterval(window._timers[phase]);
+}
 
 const scenarios = [
 
@@ -866,21 +877,7 @@ const scenarios = [
 
   // ── SCENARIO 20 — Hard hierarchy: new associate says otsukaresama to plant manager ──
 ];
-
 let p3Score=0,p3Total=0,currentScenario=0;
-
-function speak(text){
-  if(!window.speechSynthesis)return;
-  window.speechSynthesis.cancel();
-  const u=new SpeechSynthesisUtterance(text);
-  u.lang='ja-JP';u.rate=0.82;
-  window.speechSynthesis.speak(u);
-}
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-}
 
 function loadScenario(){
   if(currentScenario>=scenarios.length){finishSim();return;}
@@ -897,32 +894,27 @@ function loadScenario(){
         <div class="sc-opt-en">${c.en}</div>
       </div>
     </button>`).join('');
-  const bubbleHtml=sc.romaji?`
+  const bubbleHtml=sc.jp?`
     <div class="dialogue-bubble bubble-jp">
       <div class="bubble-label">${sc.label}</div>
       <div class="bubble-romaji">${sc.romaji}</div>
       ${sc.phonetic?`<div class="bubble-phonetic">${sc.phonetic}</div>`:''}
-      ${sc.jp?`<div class="bubble-jp-text">${sc.jp}</div>`:''}
+      <div class="bubble-jp-text">${sc.jp}</div>
       ${sc.hint?`<div class="bubble-hint">💡 ${sc.hint}</div>`:''}
       <button class="speak-btn" style="margin-top:10px" onclick="speak('${sc.jp.replace(/'/g,"\'")}')">🔊 Hear it</button>
-    </div>`:`<div class="dialogue-bubble bubble-jp">
+    </div>`:`
+    <div class="dialogue-bubble bubble-jp">
       <div class="bubble-label">${sc.label}</div>
       <div class="bubble-hint">💡 ${sc.hint}</div>
     </div>`;
   document.getElementById('scenario-area').innerHTML=`
-    <div class="scenario-header">
-      <div class="scenario-icon">${sc.icon}</div>
-      <div><div class="sc-meta">Scenario ${currentScenario+1}</div><div class="sc-setup">${sc.setup}</div></div>
-    </div>
+    <div class="sc-icon">${sc.icon}</div>
+    <div class="sc-setup">${sc.setup}</div>
     ${bubbleHtml}
-    <div class="sim-prompt">${sc.prompt}</div>
-    <div class="sim-choices" role="group" aria-label="Answer choices">${choicesHtml}</div>
-    <div class="sim-feedback" id="sim-fb" role="alert"></div>
-    <div id="sim-next" style="display:none;text-align:right;margin-top:8px;">
-      <button class="btn btn-${currentScenario<scenarios.length-1?'primary':'gold'}" onclick="nextScenario()">
-        ${currentScenario<scenarios.length-1?'Next Scenario →':'See Final Results →'}
-      </button>
-    </div>`;
+    <div class="sc-prompt">${sc.prompt}</div>
+    <div class="sim-choices">${choicesHtml}</div>`;
+  document.getElementById('sim-fb').className='sim-feedback';
+  document.getElementById('sim-next').style.display='none';
 }
 
 function answerScenario(idx){
@@ -937,13 +929,12 @@ function answerScenario(idx){
     else if(i===idx&&!correct)b.classList.add('wrong');
   });
   const fb=document.getElementById('sim-fb');
-  fb.textContent=correct?sc.fb_correct:sc.fb_wrong;
+  fb.innerHTML=correct?sc.fb_correct:sc.fb_wrong;
   fb.className='sim-feedback show '+(correct?'ok':'bad');
   document.getElementById('sim-next').style.display='block';
-  // auto-play the correct answer audio
-  const correctChoice = sc.choices.find(ch=>ch.correct);
-  const audioText = correctChoice && correctChoice.jp ? correctChoice.jp : (sc.jp || null);
-  if(audioText) setTimeout(()=>speak(audioText), 400);
+  const correctChoice=sc.choices.find(ch=>ch.correct);
+  const audioText=correctChoice&&correctChoice.jp?correctChoice.jp:(sc.jp||null);
+  if(audioText)setTimeout(()=>speak(audioText),400);
 }
 
 function nextScenario(){currentScenario++;loadScenario();}
@@ -972,10 +963,9 @@ function restartSim(){
   loadScenario();
 }
 
-// Init — splash starts first; loadScenario called by nextCue()
+// Init
 startTimer('p3',2400,'p3-timer');
-
+document.querySelector('.screen').classList.add('active');
 
 </script>
-</body>
 </html>
